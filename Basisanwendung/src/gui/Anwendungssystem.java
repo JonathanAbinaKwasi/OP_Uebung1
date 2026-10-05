@@ -2,7 +2,7 @@
 package gui;
 
 import java.io.*;
-//import business.CsvDateiLeser;
+import business.CsvDateiLeser;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.*;
@@ -19,7 +19,7 @@ import javafx.stage.Stage;
  */
 public class Anwendungssystem {
 	// Objekt zum Lesen der Kunden.csv - Datei
-	//private CsvDateiLeser csvDateiLeser;
+	private CsvDateiLeser csvDateiLeser;
 	private GridPane grid = new GridPane();
 	private Label lblAnzeige = new Label("Anzeige");
 	private TextArea txtAnzeige = new TextArea();
@@ -32,12 +32,12 @@ public class Anwendungssystem {
 	 * @param primaryStage das Stage-Objekt zum Basisfenster
 	 */
 	public Anwendungssystem(Stage primaryStage) {
-		//this.csvDateiLeser = new CsvDateiLeser();
+		this.csvDateiLeser = new CsvDateiLeser();
 		this.grid.setAlignment(Pos.CENTER);
 		this.grid.setHgap(10);
 		this.grid.setVgap(10);
 		this.grid.setPadding(new Insets(25, 25, 25, 25));
-		//primaryStage.setTitle(this.csvDateiLeser.getUeberschrift());
+		primaryStage.setTitle(this.csvDateiLeser.getUeberschrift());
 		Scene scene = new Scene(grid, 210, 200);
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -58,9 +58,9 @@ public class Anwendungssystem {
 
 	/*
 	 * initialisiert die Listener zu den Steuerelementen auf der Maske
-	 */
+	 
 	private void initListener() {
-	}
+	}/*
 
 	/* zeigt den Inhalt des Arrays zeilen in txtAnzeige an. */
 	private void zeigeAn(String[] zeilen) {
@@ -82,5 +82,37 @@ public class Anwendungssystem {
 		alert.setHeaderText(ueberschrift);
 		alert.setContentText(meldung);
 		alert.show();
+	}
+
+	/*
+	 * initialisiert die Listener zu den Steuerelementen auf der Maske
+	 */
+	private void initListener() {
+		btnAnzeige.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				String[] ergebnis = leseKunden();
+				zeigeAn(ergebnis);
+			}
+		});
+	}
+
+	/*
+	 * liest die Zeilen der Datei Kunden.csv und gibt sie als String-Array zurueck.
+	 * 
+	 * @return String[], enthaelt die Zeilen der Datei Kunden.csv
+	 */
+	private String[] leseKunden() {
+		String[] ergebnis = null;
+		try {
+			ergebnis = this.csvDateiLeser.leseKunden();
+		} catch (FileNotFoundException fnfExc) {
+			this.zeigeFehlermeldung("FileNotFoundException", "Datei wurde nicht gefunden!");
+		} catch (IOException ioExc) {
+			this.zeigeFehlermeldung("IOException", "Fehler beim Lesen der Datei!");
+		} catch (Exception exc) {
+			this.zeigeFehlermeldung("Exception", "Unbekannter Fehler!");
+		}
+		return ergebnis;
 	}
 }
